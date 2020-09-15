@@ -13,7 +13,7 @@ kind: Service
 metadata:
   labels:
     k8s-app: kube-controller-manager
-  name: kube-controller-manage-monitor
+  name: kube-controller-manager
   namespace: kube-system
 spec:
   ports:
@@ -28,7 +28,7 @@ kind: Endpoints
 metadata:
   labels:
     k8s-app: kube-controller-manager
-  name: kube-controller-manage-monitor
+  name: kube-controller-manager
   namespace: kube-system
 subsets:
 - addresses:
