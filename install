@@ -1,0 +1,9 @@
+git仓库地址：
+https://github.com/prometheus-operator/kube-prometheus
+
+manifests文件
+https://github.com/prometheus-operator/kube-prometheus/tree/master/manifests
+
+1.先执行setup目录下的文件
+
+2.再执manifests目录下的文件
