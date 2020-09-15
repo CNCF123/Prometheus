@@ -57,7 +57,7 @@ spec:
       keyFile: /etc/kubernetes/pki/etcd/healthcheck-client.key
       insecureSkipVerify: true
   selector:
-    matchLaels:
+    matchLabels:
       k8s-app: etcd
   namespaceSelector:
     matchNames:
