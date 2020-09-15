@@ -1,0 +1,106 @@
+原文 https://www.cnblogs.com/jayce9102/p/12073559.html
+
+一、步骤及注意事项（前提，部署参考部署篇）
+
+1.一般etcd集群会开启HTTPS认证，因此访问etcd需要对应的证书
+2.使用证书创建etcd的secret
+3.将etcd的secret挂在到prometheus
+4.创建etcd的servicemonitor对象（匹配kube-system空间下具有k8s-app=etcd标签的service）
+5.创建service关联被监控对象
+
+二、实际操作步骤（etcd证书默认路径：/etc/kubernetes/pki/etcd/）
+
+1、创建etcd的secret
+cd /etc/kubernetes/pki/etcd/
+kubectl create secret generic etcd-certs --from-file=healthcheck-client.crt --from-file=healthcheck-client.key --from-file=ca.crt -n monitoring
+
+2、添加secret到名为k8s的prometheus对象上（kubectl edit prometheus k8s -n monitoring或者修改yaml文件并更新资源）
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: k8s
+  namespace: monitoring
+spec:
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: monitoring
+      port: web
+  baseImage: quay.io/prometheus/prometheus
+  nodeSelector:
+    kubernetes.io/os: linux
+  podMonitorNamespaceSelector: {}
+  podMonitorSelector: {}
+  replicas: 2
+  secrets:  ### 
+  - etcd-certs ###
+  
+3.创建servicemonitoring
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: etcd-k8s
+  namespace: monitoring
+  labels:
+    k8s-app: etcd-k8s
+spec:
+  jobLabel: k8s-app
+  endpoints:
+  - port: port
+    interval: 30s
+    scheme: https
+    tlsConfig:
+      caFile: /etc/prometheus/secrets/etcd-certs/ca.crt
+      certFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.crt
+      keyFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.key
+      insecureSkipVerify: true
+  selector:
+    matchLaels:
+      k8s-app: etcd
+  namespaceSelector:
+    matchNames:
+    - kube-system
+    
+ 4、创建service并自定义endpoint（考虑到etcd可能部署在kubernetes集群外，因此自定义endpoint）
+ apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-k8s
+  namespace: kube-system
+  labels:
+    k8s-app: etcd
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - name: port
+    port: 2379
+    protocol: TCP
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: etcd-k8s
+  namespace: kube-system
+  labels:
+    k8s-app: etcd
+subsets:
+- addresses:
+  - ip: 1.1.1.11  
+  - ip: 1.1.1.12  
+  - ip: 1.1.1.13
+    nodeName: etcd-master
+  ports:
+  - name: port
+    port: 2379
+    protocol: TCP
+
+此处正常能通过prometheus的页面看到对应的监控信息了
+若监控中出现报错：connection refused，修改/etc/kubernetes/manifests下的etcd.yaml文件
+方法一：--listen-client-urls=https://0.0.0.0:2379
+方法二：--listen-client-urls=https://127.0.0.1:2379,https://1.1.1.11:2379
+  
+  
