@@ -1,0 +1,9 @@
+compatibility 
+https://github.com/prometheus-operator/kube-prometheus#kubernetes-compatibility-matrix
+
+kube-prometheus-stack	1.14	1.15	1.16	1.17	1.18	1.19
+release-0.3	✔	✔	✔	✔	✗	✗
+release-0.4	✗	✗	✔ (v1.16.5+)	✔	✗	✗
+release-0.5	✗	✗	✗	✗	✔	✗
+release-0.6	✗	✗	✗	✗	✔	✗
+HEAD	✗	✗	✗	✗	x	✔
