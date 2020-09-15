@@ -1,3 +1,13 @@
+1.先把文件 /etc/kubernetes/manifests/kube-controller-manager.yaml中的 bind-address 改成0.0.0.0
+  containers:
+  - command:
+    - kube-controller-manager
+    - --allocate-node-cidrs=true
+    - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf
+    - --authorization-kubeconfig=/etc/kubernetes/controller-manager.conf
+    - --bind-address=0.0.0.0
+
+2.创建service和endpoints    
 apiVersion: v1
 kind: Service
 metadata:
@@ -22,7 +32,7 @@ metadata:
   namespace: kube-system
 subsets:
 - addresses:
-  - ip: 192.168.x.x
+  - ip: 192.168.x.x #根据实际情况，配置master节点的ip，多个master节点请配置多个ip
   ports:
   - name: http-metrics
     port: 10252
