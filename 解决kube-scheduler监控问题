@@ -12,7 +12,7 @@ kind: Service
 metadata:
   labels:
     k8s-app: kube-scheduler
-  name: kube-scheduler-monitor
+  name: kube-scheduler
   namespace: kube-system
 spec:
   ports:
@@ -27,7 +27,7 @@ kind: Endpoints
 metadata:
   labels:
     k8s-app: kube-scheduler
-  name: kube-scheduler-monitor
+  name: kube-scheduler
   namespace: kube-system
 subsets:
 - addresses:
