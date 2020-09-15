@@ -41,10 +41,10 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: etcd-k8s
+  name: etcd
   namespace: monitoring
   labels:
-    k8s-app: etcd-k8s
+    k8s-app: etcd
 spec:
   jobLabel: k8s-app
   endpoints:
@@ -67,7 +67,7 @@ spec:
  apiVersion: v1
 kind: Service
 metadata:
-  name: etcd-k8s
+  name: etcd
   namespace: kube-system
   labels:
     k8s-app: etcd
@@ -83,7 +83,7 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: etcd-k8s
+  name: etcd
   namespace: kube-system
   labels:
     k8s-app: etcd
@@ -92,7 +92,6 @@ subsets:
   - ip: 1.1.1.11  
   - ip: 1.1.1.12  
   - ip: 1.1.1.13
-    nodeName: etcd-master
   ports:
   - name: port
     port: 2379
