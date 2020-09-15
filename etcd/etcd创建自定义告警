@@ -1,0 +1,25 @@
+创建一个prometheusRule资源后再prometheus的pod中会生成对应的告警配置文件
+注意：此处的标签一定要匹配
+告警项：若etcd集群有一半以上的节点可用，则认为集群可用，否则产生告警
+
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: etcd-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: etcd-exporter.rules
+    rules:
+    - alert: EtcdClusterUnavailable
+      annotations:
+        summary: etcd cluster small
+        description: If one more etcd peer goes down the cluster will be unavailable
+      expr: |
+        count(up{job="etcd"} == 0) > (count(up{job="etcd"}) / 2-1)
+      for: 3m
+      labels:
+        severity: critical
