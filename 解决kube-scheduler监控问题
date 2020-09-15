@@ -1,0 +1,38 @@
+1.先把文件 /etc/kubernetes/manifests/kube-scheduler.yaml中的 bind-address 改成0.0.0.0
+  containers:
+  - command:
+    - kube-scheduler
+    - --authentication-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --authorization-kubeconfig=/etc/kubernetes/scheduler.conf
+    - --bind-address=0.0.0.0
+
+2.创建service和endpoints    
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    k8s-app: kube-scheduler
+  name: kube-scheduler-monitor
+  namespace: kube-system
+spec:
+  ports:
+  - name: http-metrics
+    port: 10251
+    protocol: TCP
+    targetPort: 10251
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  labels:
+    k8s-app: kube-scheduler
+  name: kube-scheduler-monitor
+  namespace: kube-system
+subsets:
+- addresses:
+  - ip: 192.168.x.x #根据实际情况，配置master节点的ip，多个master节点请配置多个ip
+  ports:
+  - name: http-metrics
+    port: 10251
+    protocol: TCP
