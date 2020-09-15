@@ -1,0 +1,13 @@
+文件 prometheus-operator-deployment.yaml，添加time参数
+
+      containers:
+      - args:
+        - --kubelet-service=kube-system/kubelet
+        - --logtostderr=true
+        - --config-reloader-image=jimmidyson/configmap-reload:v0.3.0
+        - --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:v0.38.1
+        - storage.tsdb.retention.time=30d # 在这添加time参数
+        image: quay.io/coreos/prometheus-operator:v0.38.1
+        name: prometheus-operator
+        
+注意：参数名为storage.tsdb.retention.time=30d，我之前使用的是 --storage.tsdb.retention.time=30d, apply之后提示flag 提供了但未定义。
