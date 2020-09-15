@@ -1,0 +1,25 @@
+参见 kubectl explain Prometheus.spec.storage.volumeClaimTemplate
+
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  labels:
+    prometheus: k8s
+  name: k8s
+  namespace: monitoring
+spec:
+  alerting:
+    alertmanagers:
+    - name: alertmanager-main
+      namespace: monitoring
+      port: web
+#-----storage-----
+  storage: #这部分为持久化配置
+    volumeClaimTemplate:
+      spec:
+        storageClassName: rook-cephfs ### 或者rook-ceph-block
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+#-----------------
