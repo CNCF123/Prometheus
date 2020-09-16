@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kafka-exporter
+  name: kafka-exporter
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  template:
+    metadata:
+      labels:
+        app: kafka-exporter
+    spec:
+      containers:
+      - args:
+        - --kafka.server=kafka-0.kafka-headless.public-service:9092
+        env:
+        - name: TZ
+          value: Asia/Shanghai
+        - name: LANG
+          value: C.UTF-8
+        image: danielqsj/kafka-exporter:latest
+        imagePullPolicy: IfNotPresent
+        name: kafka-exporter
+        ports:
+        - containerPort: 9308
+          name: web
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /usr/share/zoneinfo/Asia/Shanghai
+          name: tz-config
+        - mountPath: /etc/localtime
+          name: tz-config
+        - mountPath: /etc/timezone
+          name: timezone
+      volumes:
+      - hostPath:
+          path: /usr/share/zoneinfo/Asia/Shanghai
+          type: ""
+        name: tz-config
+      - hostPath:
+          path: /etc/timezone
+          type: ""
+        name: timezone
