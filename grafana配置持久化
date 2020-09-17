@@ -1,3 +1,5 @@
+### grafana应该单独部署在宿主机
+
 1. 创建grafana-pvc
 
 apiVersion: v1
