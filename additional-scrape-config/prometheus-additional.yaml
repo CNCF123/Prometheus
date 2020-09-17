@@ -1,4 +1,4 @@
-- job_name: 'blackbox'
+- job_name: 'blackbox' ### 这里，我使用黑盒的配置
   metrics_path: /probe
   params:
     module: [http_2xx]  # Look for a HTTP 200 response.
