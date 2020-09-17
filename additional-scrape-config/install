@@ -25,3 +25,6 @@ k get Prometheus -n monitoring > Prometheus.yaml
       key: prometheus-additional.yaml ###
  
  4.需要删除 prometheus 的 pod 才能重新加载配置
+ k get po -n monitoring
+k delete po prometheusPodName -n monitoring
+ 
