@@ -11,5 +11,7 @@
       target_label: __param_target
     - source_labels: [__param_target]
       target_label: instance
+    - source_labels: [instance]
+      target_label: target
     - target_label: __address__
       replacement: blackbox-exporter:9115  # The blackbox exporter's real hostname:port.
