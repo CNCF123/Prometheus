@@ -28,3 +28,4 @@ k get Prometheus -n monitoring > Prometheus.yaml
 k get po -n monitoring
 k delete po prometheusPodName -n monitoring
  
+5.添加 blackbox的grafana页面
