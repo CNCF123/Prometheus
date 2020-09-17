@@ -1,0 +1,60 @@
+"global":
+  "resolve_timeout": "2h"
+  ### email
+  smtp_from: "kubernetes_guide@163.com"
+  smtp_smarthost: "smtp.163.com:465"
+  smtp_hello: "163.com"
+  smtp_auth_username: "kubernetes_guide@163.com"
+  smtp_auth_password: "DYKEBOEGTFSEUGVY"
+  smtp_require_tls: false
+  ### wechat
+  wechat_api_url: 'https://qyapi.weixin.qq.com/cgi-bin/'
+  wechat_api_secret: 'ZZQt0Ue9mtplH9u1g8PhxR_RxEnRu512CQtmBn6R2x0'
+  wechat_api_corp_id: 'wwef86a30130f04f2b'
+"inhibit_rules":
+- "equal":
+  - "namespace"
+  - "alertname"
+  "source_match":
+    "severity": "critical"
+  "target_match_re":
+    "severity": "warning|info"
+- "equal":
+  - "namespace"
+  - "alertname"
+  "source_match":
+    "severity": "warning"
+  "target_match_re":
+    "severity": "info"
+"receivers":
+- "name": "Default"
+  "email_configs": 
+  - to: "kubernetes_guide@163.com"
+    send_resolved: true
+- "name": "Watchdog"
+  "email_configs": 
+  - to: "kubernetes_guide@163.com"
+    send_resolved: true
+- "name": "Critical"
+  "email_configs": 
+  - to: "kubernetes_guide@163.com"
+    send_resolved: true
+- name: 'wechat'
+  wechat_configs:
+  - send_resolved: true
+    to_tag: '1'
+    agent_id: '1000003'
+"route":
+  "group_by":
+  - "namespace"
+  "group_interval": "1m"
+  "group_wait": "30s"
+  "receiver": "Default"
+  "repeat_interval": "1m"
+  "routes":
+  - "match":
+      "alertname": "Watchdog"
+    "receiver": "wechat"
+  - "match":
+      "severity": "critical"
+    "receiver": "Critical"
