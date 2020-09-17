@@ -1,0 +1,35 @@
+1.讲下列配置添加到additional-scrape-config的secret
+kubectl get secret  additional-scrape-configs -n monitoring -oyaml
+
+2. 再将数据 base64 --decode到文件 prometheus-additional.yaml 
+
+3. 编辑配置文件 prometheus-additional.yaml ，添加下列配置信息
+- job_name: 'auto-discovery-ingress'
+  metrics_path: /probe
+  params:
+    module: [http_2xx]  
+  kubernetes_sd_configs:
+  - role: ingress
+  relabel_configs:
+  - source_labels: [__meta_kubernetes_ingress_annotation_prometheus_io_http_probe]
+    action: keep
+    regex: true
+  - source_labels: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
+    regex: (.+);(.+);(.+)
+    replacement: ${1}://${2}${3}
+    target_label: __param_target
+  - source_labels: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
+    regex: (.+);(.+);(.+)
+    replacement: ${1}://${2}${3}
+    target_label: target
+  - target_label: __address__
+    replacement: blackbox-exporter:9115
+  - source_labels: [__param_target]
+    target_label: instance
+  - action: labelmap
+    regex: __meta_kubernetes_ingress_label_(.+)
+  - source_labels: [__meta_kubernetes_namespace]
+    target_label: kubernetes_namespace
+  - source_labels: [__meta_kubernetes_ingress_name]
+    target_label: kubernetes_name
+
