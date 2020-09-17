@@ -52,7 +52,7 @@ spec:
     interval: 30s
     scheme: https
     tlsConfig:
-      ### 注意，这三个文件，是etcd证书挂载到prometheus容器内部的路径，  现版本可能是这个路径/etc/prometheus/certs/etcd-certs/
+      ### 注意，这三个文件，是etcd证书挂载到prometheus容器内部的路径
       caFile: /etc/prometheus/secrets/etcd-certs/ca.crt
       certFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.crt
       keyFile: /etc/prometheus/secrets/etcd-certs/healthcheck-client.key
