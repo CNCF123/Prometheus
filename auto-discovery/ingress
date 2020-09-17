@@ -33,3 +33,6 @@ kubectl get secret  additional-scrape-configs -n monitoring -oyaml
   - source_labels: [__meta_kubernetes_ingress_name]
     target_label: kubernetes_name
 
+然后让配置生效
+
+4. 配置 monitor-sa-clusterRoleBinding, monitor的sa默认没有查看集群的权限，需要配置view的clusterRole权限
