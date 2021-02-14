@@ -1,3 +1,4 @@
+# cat /usr/lib/systemd/system/node_exporter.service
 [Unit]
 Description=node_exporter
 After=network.target 
@@ -6,10 +7,8 @@ After=network.target
 ExecStart=/usr/local/node_exporter/node_exporter \
 --web.listen-address=:9100 \
 --collector.systemd \
---collector.systemd.unit-whitelist=(sshd|docker|rsyslog|).service\
+--collector.systemd.unit-include="(sshd|docker|rsyslog).service" \
 --collector.textfile.directory=/usr/local/node_exporter/textfile.collected
-
-Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
