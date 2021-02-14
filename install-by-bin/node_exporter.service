@@ -9,5 +9,7 @@ ExecStart=/usr/local/node_exporter/node_exporter \
 --collector.systemd.unit-whitelist=(sshd|docker|rsyslog|).service\
 --collector.textfile.directory=/usr/local/node_exporter/textfile.collected
 
+Restart=on-failure
+
 [Install]
 WantedBy=multi-user.target
