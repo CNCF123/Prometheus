@@ -1,0 +1,15 @@
+[Unit]
+Description=node_exporter
+After=network.target 
+
+[Service]
+User=prometheus
+Group=prometheus
+ExecStart=/usr/local/node_exporter/node_exporter \
+--web.listen-address=:9100 \
+--collector.systemd \
+--collector.systemd.unit-whitelist=(sshd|docker|rsyslog|).service\
+--collector.textfile.directory=/usr/local/node_exporter/textfile.collected
+
+[Install]
+WantedBy=multi-user.target
